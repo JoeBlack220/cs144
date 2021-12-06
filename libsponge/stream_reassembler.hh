@@ -53,6 +53,7 @@ class StreamReassembler {
     
     void do_write();
     void check_eof();
+    size_t get_last_index() const { return _last_index; }
 };
 
 #endif  // SPONGE_LIBSPONGE_STREAM_REASSEMBLER_HH

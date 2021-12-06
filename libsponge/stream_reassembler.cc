@@ -15,8 +15,8 @@ void DUMMY_CODE(Targs &&... /* unused */) {}
 
 using namespace std;
 
-StreamReassembler::StreamReassembler(const size_t capacity) : _output(capacity), _capacity(capacity), _eof_index(-1) {    cout << "hello\n";
-}
+StreamReassembler::StreamReassembler(const size_t capacity) : _output(capacity), _capacity(capacity), _eof_index(-1) {}
+
 
 // Checks if it reaches the eof, if it is, close the output stream.
 void StreamReassembler::check_eof() {
