@@ -1,6 +1,6 @@
 #include "stream_reassembler.hh"
 #include <queue>
-#include <iostream>
+#include <sstream>
 #include <map>
 
 // Dummy implementation of a stream reassembler.
@@ -32,15 +32,19 @@ void StreamReassembler::do_write(){
         return;
     }
     size_t start = _map.begin()->first;
-    while(start==_last_index && _output.remaining_capacity() != 0) {
+    ostringstream output;
+    size_t cur_len = 0;
+    while(start==_last_index && _output.remaining_capacity() > cur_len) {
         char c = _map.begin()->second;
         // Convert the char to string and write to the output stream.
-        _output.write(string(1, c));
         _map.erase(start);
+        cur_len++;
         _last_index++;
+        output << c;
         if(_map.size()==0) break;
         start=_map.begin()->first;
     }
+    _output.write(output.str());
     check_eof();
 }
 

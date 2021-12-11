@@ -46,7 +46,6 @@ void TCPSender::fill_window() {
             size_t payload_size = min({_stream.buffer_size(),
              static_cast<size_t>(_receiver_window_left),
              static_cast<size_t>(TCPConfig::MAX_PAYLOAD_SIZE)});
-
             segment.payload() = _stream.read(payload_size);
 
             if(_stream.eof() && _receiver_window_left > payload_size) {
@@ -166,7 +165,6 @@ bool TCPSender::is_fin_acked() const {
 void TCPSender::send_segment(TCPSegment segment) {
     segment.header().seqno = wrap(_next_seqno, _isn);
     size_t len_increased = segment.length_in_sequence_space();
-
     _next_seqno += len_increased;
     _bytes_in_flight += len_increased;
     _receiver_window_left -= len_increased;

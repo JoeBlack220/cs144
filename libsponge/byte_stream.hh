@@ -25,6 +25,9 @@ class ByteStream {
     size_t _cap;      // capacity of the buffer.
     size_t _num_written{}; // total number of bytes written.
     size_t _num_read{}; // total number of bytes read.
+    size_t _begin_ptr{0}; // point to the first char
+    size_t _end_ptr{0};  // point to the last position that we need to write the char
+    bool _is_empty{true};
   public:
     //! Construct a stream with room for `capacity` bytes.
     ByteStream(const size_t capacity);
