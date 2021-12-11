@@ -1,5 +1,5 @@
 #include "tcp_receiver.hh"
-
+#include <iostream>
 // Dummy implementation of a TCP receiver
 
 // For Lab 2, please replace with a real implementation that passes the
@@ -24,11 +24,13 @@ void TCPReceiver::segment_received(const TCPSegment &seg) {
         _isn = seqno;
         _syn = true;
     }
-    if(header.fin) {
+    if(_syn && header.fin) {
         _fin = true;
     }
     size_t index = unwrap(seqno, _isn, _checkpoint);
+
     _checkpoint = index;
+    
     // According to the lab, actual data starts in the seqno 1.
     _reassembler.push_substring(data, header.syn?0:index-1, header.fin);
 }

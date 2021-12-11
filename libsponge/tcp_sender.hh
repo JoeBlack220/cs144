@@ -101,7 +101,7 @@ class TCPSender {
     //!@}
 
     void send_segment(TCPSegment segment);
-
+    bool ack_valid(uint64_t abs_ackno);
     bool is_closed() const;
     bool is_syn_sent() const;
     bool is_syn_acked() const;

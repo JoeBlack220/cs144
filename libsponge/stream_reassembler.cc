@@ -55,7 +55,7 @@ void StreamReassembler::push_substring(const string &data, const size_t index, c
     size_t start = 0;
 
     // Try to write it before reading the data in case the output stream still has some space.
-    do_write();
+    // do_write();
     // Set eof if we receives the signal.
     if(eof) {
         _eof_index = index + data.length();
@@ -64,6 +64,9 @@ void StreamReassembler::push_substring(const string &data, const size_t index, c
         if(start+index < _last_index) {
             start++;
             continue;
+        }
+        if(start+index >= _last_index+_capacity) {
+            break;
         }
         _map[start+index] = data[start];
         // If the map is full, remove the last element

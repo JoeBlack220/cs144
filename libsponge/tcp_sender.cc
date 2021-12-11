@@ -71,11 +71,18 @@ void TCPSender::fill_window() {
     }
 }
 
+bool TCPSender::ack_valid(uint64_t abs_ackno) {
+    if (_segments_outstanding.empty())
+        return abs_ackno <= _next_seqno;
+    return abs_ackno <= _next_seqno &&
+           abs_ackno >= unwrap(_segments_outstanding.front().header().seqno, _isn, _next_seqno);
+}
+
 //! \param ackno The remote receiver's ackno (acknowledgment number)
 //! \param window_size The remote receiver's advertised window size
 void TCPSender::ack_received(const WrappingInt32 ackno, const uint16_t window_size) { 
     uint64_t abs_ackno = unwrap(ackno, _isn, _next_seqno);
-    if(!(abs_ackno <= _next_seqno && abs_ackno >= unwrap(_segments_outstanding.front().header().seqno, _isn, _next_seqno))) {
+    if(!ack_valid(abs_ackno)) {
         return;
     }
 
