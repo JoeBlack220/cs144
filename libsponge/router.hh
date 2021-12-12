@@ -5,7 +5,45 @@
 
 #include <optional>
 #include <queue>
+#include <iostream>
+class Trie {
+public:
+  Trie* children[2];
+  bool is_end{};
+  std::optional<Address> address{};
+  size_t int_num{};
 
+  Trie* find(uint8_t index, uint32_t addr) {
+    Trie* res = nullptr;
+    if(is_end) {
+      res = this;
+    }
+    bool next_zero = (addr & (1 << (32 - index - 1))) == 0;
+    int next_digit = next_zero ? 1 : 0;
+    if(children[next_digit]) {
+      Trie* res_cand = children[next_digit]->find(index + 1, addr);
+      if(res_cand) res = res_cand;
+    }
+    return res;
+  }
+
+  void insert(uint8_t index, uint8_t prefix, uint32_t addr, size_t interface_num, std::optional<Address> next_hop) {
+      if(index == prefix) {
+          this->is_end = true;
+          this->address = next_hop;
+          this->int_num = interface_num;
+          return;
+      }
+      if(index > 32) return;
+      bool next_zero = (addr & (1 << (32 - index - 1))) == 0;
+      int next_digit = next_zero ? 1 : 0;
+      if(!children[next_digit]) {
+          children[next_digit] = new Trie();
+      }      
+
+      children[next_digit]->insert(index+1, prefix, addr, interface_num, next_hop);
+  }
+};
 //! \brief A wrapper for NetworkInterface that makes the host-side
 //! interface asynchronous: instead of returning received datagrams
 //! immediately (from the `recv_frame` method), it stores them for
@@ -48,7 +86,7 @@ class Router {
     //! as specified by the route with the longest prefix_length that matches the
     //! datagram's destination address.
     void route_one_datagram(InternetDatagram &dgram);
-
+    Trie* root = new Trie();
   public:
     //! Add an interface to the router
     //! \param[in] interface an already-constructed network interface
